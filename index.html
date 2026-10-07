@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fake Job Detector</title>
+
+    <style>
+        body {
+            background-color: #f0f4ff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        textarea {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        #result {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+<body>
+
+<h2>Fake Job Detection</h2>
+
+<textarea id="jobText" rows="6" cols="50"></textarea><br><br>
+
+<button onclick="checkJob()">Check</button>
+
+<p id="result"></p>
+
+<script>
+function checkJob() {
+    let text = document.getElementById("jobText").value;
+
+    if(text === ""){
+        alert("Please enter job description");
+        return;
+    }
+
+    console.log("Sending:", text);  
+
+    fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: text })
+    })
+    .then(res => {
+        console.log("Response status:", res.status); 
+        return res.json();
+    })
+    .then(data => {
+        console.log("Data:", data); 
+        document.getElementById("result").innerText = data.prediction;
+    })
+    .catch(err => {
+        console.log("Error:", err);  
+    });
+}
+</script>
+
+</body>
+</html>
